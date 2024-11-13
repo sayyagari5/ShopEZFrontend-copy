@@ -37,7 +37,8 @@ export function CheckoutMenu({ cart, totalPrice, onClose }: CheckoutMenuProps) {
       userId,
       trackingId,
       amount,
-      amountTax
+      amountTax,
+      creditCard
     };
 
     try {
