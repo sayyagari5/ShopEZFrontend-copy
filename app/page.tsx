@@ -42,13 +42,25 @@ export default function ShopEZ() {
    const [customerName, setCustomerName] = useState('')
    const [email, setEmail] = useState('')
    const [phoneNo, setPhoneNo] = useState('')
+   const [phoneError, setPhoneError] = useState('')
    const [street, setStreet] = useState('')
+   const [streetError, setStreetError] = useState('')
    const [city, setCity] = useState('')
+   const [cityError, setCityError] = useState('')
    const [state, setState] = useState('')
+   const [stateError, setStateError] = useState('')
    const [zipcode, setZipcode] = useState('')
+   const [zipcodeError, setZipcodeError] = useState('')
    const [country, setCountry] = useState('')
+   const [countryError, setCountryError] = useState('')
 
    const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/
+   const phoneInputValidation = /^\+?\d{10,15}$/
+   const streetInputValidation = /^[a-zA-Z0-9\s,.'-]{5,}$/
+   const cityInputValidation = /^[a-zA-Z\s-]{2,}$/
+   const stateInputValidation = /^[a-zA-Z]{2}$/;
+   const zipcodeInputValidation = /^\d{5}$/
+   const countryInputValidation = /^[a-zA-Z\s-]{4,}$/
 
    const validatePassword = (password: string) => {
       if (!passwordRequirements.test(password)) {
@@ -59,6 +71,72 @@ export default function ShopEZ() {
       }
       setPasswordError('');
       return true;
+   }
+
+   const validatePhoneNumber = (phoneNo: string): boolean => {
+      if (!phoneInputValidation.test(phoneNo)) {
+         setPhoneError(
+             'Please enter a valid phone number. Phone number must be 10-15 digits long (1234567890, 123-456-7890, +1 123 456 7890, etc.)'
+         );
+      return false;
+      }
+   setPhoneError('')
+   return true;
+   }
+
+   const validateStreetAddress = (street: string): boolean => {
+      if (!streetInputValidation.test(street)) {
+         setStreetError(
+             'Please enter a valid street address. Street address must be at least 5 characters long'
+         );
+      return false;
+      }
+   setStreetError('')
+   return true;
+   }
+
+   const validateCity = (city: string): boolean => {
+      if (!cityInputValidation.test(city)) {
+         setCityError(
+             'Please enter a valid city. (Can only contain letters, spaces, or dashes)'
+         );
+      return false;
+      }
+   setCityError('')
+   return true;
+   }
+
+   const validateState = (state: string): boolean => {
+      if (!stateInputValidation.test(state)) {
+         setStateError(
+             'Please enter a valid 2-letter state abbreviation'
+         );
+      return false;
+      }
+   setStateError('')
+   return true;
+   }
+
+   const validateZipcode = (zipcode: string): boolean => {
+      if (!zipcodeInputValidation.test(zipcode)) {
+         setZipcodeError(
+             'Please enter a valid zipcode. Must be 5 digits (12345, etc.)'
+         );
+      return false;
+      }
+   setZipcodeError('')
+   return true;
+   }
+
+   const validateCountry = (country: string): boolean => {
+      if (!countryInputValidation.test(country)) {
+         setCountryError(
+             'Please enter a valid country. (Can only contain letters, spaces, or dashes)'
+         );
+      return false;
+      }
+   setCountryError('')
+   return true;
    }
 
    const addToCart = (product: Product) => setCart([...cart, product])
@@ -107,6 +185,36 @@ export default function ShopEZ() {
 
       // Validate password
       if (!validatePassword(password)) {
+         return;
+      }
+
+      // Validate phone number
+      if (!validatePhoneNumber(phoneNo)) {
+         return;
+      }
+
+      // Validate street address
+      if (!validateStreetAddress(street)) {
+         return;
+      }
+
+      // Validate city
+      if (!validateCity(city)) {
+         return;
+      }
+
+      // Validate state
+      if (!validateState(state)) {
+         return;
+      }
+
+      // Validate zipcode
+      if (!validateZipcode(zipcode)) {
+         return;
+      }
+
+      // Validate country
+      if (!validateCountry(country)) {
          return;
       }
 
@@ -164,11 +272,17 @@ export default function ShopEZ() {
                         {passwordError && <p className="text-red-500 text-sm mt-2">{passwordError}</p>}
                         <InputField label="Email" type="email" value={email} onChange={setEmail} required />
                         <InputField label="Phone Number" value={phoneNo} onChange={setPhoneNo} required />
+                        {phoneError && <p className="text-red-500 text-sm mt-2">{phoneError}</p>}
                         <InputField label="Street Address" value={street} onChange={setStreet} required />
+                        {streetError && <p className="text-red-500 text-sm mt-2">{streetError}</p>}
                         <InputField label="City" value={city} onChange={setCity} required />
+                        {cityError && <p className="text-red-500 text-sm mt-2">{cityError}</p>}
                         <InputField label="State" value={state} onChange={setState} required />
+                        {stateError && <p className="text-red-500 text-sm mt-2">{stateError}</p>}
                         <InputField label="Zipcode" value={zipcode} onChange={setZipcode} required />
+                        {zipcodeError && <p className="text-red-500 text-sm mt-2">{zipcodeError}</p>}
                         <InputField label="Country" value={country} onChange={setCountry} required />
+                        {countryError && <p className="text-red-500 text-sm mt-2">{countryError}</p>}
                         <Button type="submit" className="w-full">Create Account</Button>
                      </form>
                   ) : (

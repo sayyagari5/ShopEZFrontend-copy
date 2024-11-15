@@ -18,15 +18,46 @@ interface CheckoutMenuProps {
   onClose: () => void;
 }
 
+const validateAddress = (address: string): boolean => {
+  // Regex pattern for address validation
+  // Format: "number street, city, state, country"
+  const addressPattern = /^\d+\s+[A-Za-z\s]+,\s*[A-Za-z\s]+,\s*[A-Za-z]{2},\s*[A-Za-z\s]+$/;
+  return addressPattern.test(address);
+};
+
+const validateCreditCard = (creditCard: string): boolean => {
+  // Remove any spaces or dashes from the credit card number
+  const cleanedNumber = creditCard.replace(/[\s-]/g, '');
+  // Check if it's exactly 16 digits
+  const creditCardPattern = /^\d{16}$/;
+  return creditCardPattern.test(cleanedNumber);
+};
+
 export function CheckoutMenu({ cart, totalPrice, onClose }: CheckoutMenuProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
+  const [addressError, setAddressError] = useState('');
   const [creditCard, setCreditCard] = useState('');
+  const [creditCardError, setCreditCardError] = useState('');
   const [orderPlaced, setOrderPlaced] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate address
+    if (!validateAddress(address)) {
+      setAddressError('Please enter address in format: "123 Main St, New York, NY, USA"');
+      return;
+    }
+    setAddressError('');
+
+    // Validate credit card
+    if (!validateCreditCard(creditCard)) {
+      setCreditCardError('Please enter a valid 16-digit credit card number');
+      return;
+    }
+    setCreditCardError('');
 
     const userId = 123; // Replace with actual user ID
     const trackingId = Math.floor(Math.random() * 1000000); // Example tracking ID
@@ -129,17 +160,29 @@ export function CheckoutMenu({ cart, totalPrice, onClose }: CheckoutMenuProps) {
                 id="address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
+                placeholder="123 Main St, New York, NY, USA"
                 required
               />
+              {addressError && (
+                <p className="text-red-500 text-sm mt-1">{addressError}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="creditCard">Credit Card Number</Label>
               <Input
                 id="creditCard"
                 value={creditCard}
-                onChange={(e) => setCreditCard(e.target.value)}
+                onChange={(e) => {
+                  // Only allow digits, spaces, and dashes
+                  const value = e.target.value.replace(/[^\d\s-]/g, '');
+                  setCreditCard(value);
+                }}
+                placeholder="Enter 16-digit number"
                 required
               />
+              {creditCardError && (
+                <p className="text-red-500 text-sm mt-1">{creditCardError}</p>
+              )}
             </div>
             <div className="flex justify-between">
               <Button type="button" variant="outline" onClick={onClose}>
