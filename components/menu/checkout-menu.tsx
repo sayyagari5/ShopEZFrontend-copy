@@ -24,7 +24,6 @@ const validateAddress = (address: string): boolean => {
   const addressPattern = /^\d+\s+[A-Za-z\s]+,\s*[A-Za-z\s]+,\s*[A-Za-z]{2},\s*[A-Za-z\s]+$/;
   return addressPattern.test(address);
 };
-
 const validateCreditCard = (creditCard: string): boolean => {
   // Remove any spaces or dashes from the credit card number
   const cleanedNumber = creditCard.replace(/[\s-]/g, '');
