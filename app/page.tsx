@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CheckoutMenu } from '../components/menu/checkout-menu'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
    Popover,
@@ -14,6 +14,7 @@ import {
    PopoverTrigger,
 } from "@/components/ui/popover"
 import { authApi } from '@/lib/auth-api'
+import { setupSessionTimeout } from '@/lib/sessionUtils'
 
 type Product = {
    id: number
@@ -248,6 +249,24 @@ export default function ShopEZ() {
    };
 
    const handleCheckout = () => setIsCheckoutOpen(true)
+
+   const router = useRouter()
+
+   useEffect(() => {
+      if (isLoggedIn && isOtpVerified) {
+         const timeoutId = setupSessionTimeout(() => {
+            setIsLoggedIn(false)
+            setIsOtpVerified(false)
+            localStorage.removeItem('token')
+            localStorage.removeItem('email')
+            router.push('/')
+         })
+
+         return () => {
+            clearTimeout(timeoutId)
+         }
+      }
+   }, [isLoggedIn, isOtpVerified, router])
 
    if (!isLoggedIn) {
       return (
